@@ -1,0 +1,1 @@
+gtkwave::addSignalsFromList [list clk din en dout reg]
