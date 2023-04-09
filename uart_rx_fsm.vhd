@@ -17,7 +17,7 @@ entity UART_RX_FSM is
        BIT_CNT   : in  std_logic_vector(3 downto 0);
        RST_BIT   : out std_logic := '0';
        RST_CNT   : out std_logic := '0';
-       SHIFT_REG : out std_logic := '0';
+       --SHIFT_REG : out std_logic := '0';
        VLD_OUT   : out std_logic
     );
 end entity;
@@ -28,43 +28,36 @@ architecture behavioral of UART_RX_FSM is
 type FSM_STATE is (IDLE, START_BIT, DATA, STOP_BIT);
 signal state : FSM_STATE := IDLE;
 begin
-
+    RST_BIT <= '1' when state = START_BIT else '0';
     process (CLK) begin
         if rising_edge(CLK) then
             if RST = '1' then
                 state <= IDLE;
             else
                 case state is
+
                     when IDLE =>
                         VLD_OUT <= '0';
                         if DIN_FSM = '0' then
                             state <= START_BIT;
                             RST_CNT <= '1';
                         end if;
+
                     when START_BIT =>
-                        RST_BIT <= '1';
-                        SHIFT_REG <= '0';
                         RST_CNT <= '0';
-                        if READY = "111" then
-                            SHIFT_REG <= '1';
+                        if READY = "100" then -- iba 4, nie 8, lebo signal je posunuty resetmi a tak o 4 periody
                             RST_CNT <= '1';
                             state <= DATA;
-                            RST_BIT <= '0';
                         end if;
+
                     when DATA =>
                     RST_CNT <= '0';
-                        if NEXT_BIT = "1111" then
-                            SHIFT_REG <= '1';
-                        else
-                            SHIFT_REG <= '0';
-                            RST_CNT <= '0';
-                        end if;
-                        if BIT_CNT = "1000" then
-                            state <= STOP_BIT;
-                        end if;
+                    if BIT_CNT = "1000" then
+                        state <= STOP_BIT;
+                    end if;
+
                     when STOP_BIT =>
                         if NEXT_BIT = "1111" then
-                            SHIFT_REG <= '1';
                             if DIN_FSM = '1' then
                                 VLD_OUT <= '1';
                                 state <= IDLE;
@@ -72,6 +65,7 @@ begin
                         end if;
                     when others => null;
                 end case;
+                
             end if;
         end if;
     end process;

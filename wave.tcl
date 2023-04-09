@@ -10,7 +10,7 @@ gtkwave::/Edit/Insert_Blank
 
 gtkwave::/Edit/Insert_Comment "Other Signals"
          # <<< TODO: Insert 'gtkwave::addSignalsFromList' for your signals here.
-gtkwave::addSignalsFromList [list din_fsm next_bit ready bit_cnt rst_cnt shift_reg vld_out reg]
+gtkwave::addSignalsFromList [list state bit_cnt shift_reg vld_out reg]
 
 gtkwave::/Edit/UnHighlight_All
 gtkwave::/Time/Zoom/Zoom_Best_Fit
