@@ -39,7 +39,7 @@ begin
         DIN_FSM   => DIN,
         NEXT_BIT  => clk_cnt,
         READY     => clk_cnt(2 downto 0),
-        BIT_CNT   => bit_cnt,
+        BIT_CNT   => bit_cnt,  
         RST_BIT   => rst_bit,
         RST_CNT   => rst_cnt,
         VLD_OUT   => vld_out
