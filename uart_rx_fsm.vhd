@@ -37,23 +37,27 @@ begin
 
                     when IDLE =>
                         VLD_OUT <= '0';
-                        if DIN_FSM = '0' then -- start bit
+                        if DIN_FSM = '0' then -- start bit on the input
                             state <= START_BIT;
                             RST_CNT <= '1';
                         end if;
 
                     when START_BIT =>
-                        RST_CNT <= '0';
-                        if READY = "100" then -- iba 4, nie 8, lebo signal je posunuty resetmi a tak o 4 periody
+                        if READY = "100" AND DIN_FSM = '0' then -- wait for the middle of the start bit  
                             RST_CNT <= '1';
                             state <= DATA;
+                        
+                        elsif READY = "100" AND DIN_FSM='1' then -- invalid start bit
+                            state <= IDLE;
+                        else
+                            RST_CNT <= '0';
                         end if;
 
                     when DATA =>
-                    RST_CNT <= '0';
-                    if BIT_CNT = "1000" then -- read 8 bits
-                        state <= STOP_BIT;
-                    end if;
+                        RST_CNT <= '0';
+                        if BIT_CNT = "1000" then -- read 8 bits
+                            state <= STOP_BIT;
+                        end if;
 
                     when STOP_BIT =>
                         if NEXT_BIT = "1111" then -- wait for one period (16 clocks)
@@ -64,7 +68,6 @@ begin
                         end if;
                     when others => null;
                 end case;
-                
             end if;
         end if;
     end process;
