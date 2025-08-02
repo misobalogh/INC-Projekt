@@ -16,7 +16,7 @@ fi
 
 # Analyze sources and defined entities
 echo  "########## ANALYSIS ##########"
-for src in uart_rx_fsm.vhd uart_rx.vhd testbench.vhd; do
+for src in src/uart/uart_rx_fsm.vhd src/uart/uart_rx.vhd test/testbench.vhd; do
     $GHDL -a $GHDLFLAGS $src
     if [ $? -ne 0 ]; then
         echo "Analysis of $src ended with error!"
@@ -41,4 +41,4 @@ if [ $? -ne 0 ]; then
     echo "Simulation ended with error!"
     exit 1
 fi
-$GTKW $SIM_FILE --script=wave.tcl
+$GTKW $SIM_FILE --script=scripts/wave_uart.tcl
